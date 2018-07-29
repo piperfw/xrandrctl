@@ -46,7 +46,7 @@ An example entry utilising all three optional fields would be
     ]
   }
 ```
-(I recommend using a plugin or on-line tool to 'prettify' the JSON and check for valid syntax.)
+(You can use an editor plugin or on-line tool to 'prettify' the JSON and check for valid syntax.)
 
 ### Control
 To increase the brightness and blue values of the output `DVI-D-1`
@@ -70,7 +70,7 @@ A bash alias is handy here. For example,
 ---------
 alias xrandctl="python ./my_scripts/xrandrctl.py"
 ```
-You may also like to make key bindings for running `xrandctl` with various options (see 'example_i3_config_entry' for an exampple of a set of keybindings for the i3 window manager).
+You may also like to make key bindings for running `xrandctl` with various options (see `i3_config_snippet` for an exampple of a set of keybindings for the i3 window manager).
 
 To change the brightness or gamma of _all_ outputs added to `xrandr_current_values.json`, simply omit naming the output or its alias. For example,
 ```
