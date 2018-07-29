@@ -1,0 +1,20 @@
+# This below snippet should be added to your i3 config file, for example, ~/.config/i3/config, but only after you have written
+# the full path to xrandrctly.py (or minixrandrctl.py) on your system in place of /home/my_name/my_scripts/xrandrctl.py
+
+
+
+# Add a 'display' mode to i3, bound to mod+braceleft and exited using the Escape or Return keys.
+# In this mode, the arrow keys may be used to change the brightness & gamma of all screens.
+
+set $mode_display Left:    redder    Right: bluer    Up: brighter    Down: dimmer    r: reset values    (Enter/Esc: Leave selection)
+bindsym $mod+braceleft mode "$mode_display"
+
+mode "$mode_display" {
+    bindsym Up exec python /home/my_name/my_scripts/xrandrctl.py --brighter
+    bindsym Down exec python /home/my_name/my_scripts/xrandrctl.py --dimmer
+    bindsym Left exec python /home/my_name/my_scripts/xrandrctl.py --redder
+    bindsym Right exec python /home/my_name/my_scripts/xrandrctl.py --bluer
+    bindsym r exec python /home/my_name/my_scripts/xrandrctl.py --reset
+    bindsym Escape mode "default"
+    bindsym Return mode "default"
+}
