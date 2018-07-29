@@ -16,7 +16,7 @@ logger.setLevel(logging.DEBUG)
 # Comment out the below lines if you want to disable logging to file.
 file_handler = logging.FileHandler(os.path.splitext(__file__)[0] + '.log')
 # Edit level here is wish to filter messages to e.g. WARNING only.
-file_handler.setLevel(logging.DEBUG)
+file_handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s:%(levelname)s: %(message)s', '%Y-%m-%d %H:%M:%S')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
@@ -139,13 +139,13 @@ class XRandrController:
 			# Run the process and capture any output.
 			process = subprocess.run(xrandr_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
 				universal_newlines=True, timeout=1)
-			completed_message = 'Process completed in {} seconds'.format(time.time()-start)
+			completed_message = 'xrandr process completed in {:.2f} seconds'.format(time.time()-start)
 			if process.stdout:
 				completed_message += ' with the following output: {}.'.format((process.stdout))
 			else:
 				completed_message += '.'
 			# Output is sent to xrandr_controller.log.
-			logger.debug(completed_message)
+			logger.info(completed_message)
 		except subprocess.TimeoutExpired:
 				# Process was killed due to timeout expiring. Log any error and exit.
 				error_message = 'Xrandr process failed to complete after 1 second.'
