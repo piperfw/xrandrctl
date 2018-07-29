@@ -2,15 +2,15 @@
 Calls xrandr to change brightness and colour of chosen screens based on user input (brighter, dimmer, redder or 
 bluer) and the current values of brightness and colour of those screens, which is recorded in VALUE_FILE_NAME.
 
-For usage please see Readme.md (TODO).
+For usage please see Readme.md.
 
-Alias should contain printable non-whitespace characters and cannot be the name of any program on your system or
+Aliases should contain printable non-whitespace characters and cannot be the name of any program on your system or
 any of the following keywords: 'reset', 'all',
 """
 
 import json, sys, operator, subprocess, logging, os, time
 
-# Logging set-up - single file handler to xrandr_controller.log
+# Logging set-up - single file handler to xrandrctl.log
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 file_handler = logging.FileHandler(os.path.splitext(__file__)[0] + '.log')

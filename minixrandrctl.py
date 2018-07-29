@@ -2,15 +2,15 @@
 A simplified version of xrandr_controller.py, this increments/decrements the brightness or gamma values of all
 screen's listed in MINI_FILE_NAME by the same amount (see XRandrController class variables) based on user input.
 
-For usage please see Readme.md (TODO)>
+For usage please see Readme.md.
 """
 import json, sys, operator, subprocess, logging, os, time
 
-# Logging set-up - single file handler to xrandr_controller_simple.log
+# Logging set-up - single file handler to minixrandrctl.log
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 file_handler = logging.FileHandler(os.path.splitext(__file__)[0] + '.log')
-# Edit level here is wish to filter messages
+# Edit level here is wish to filter messages to e.g. WARNING only.
 file_handler.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s: %(message)s', '%Y-%m-%d %H:%M:%S')
 file_handler.setFormatter(formatter)
@@ -37,7 +37,7 @@ class XRandrController:
 	"""
 	BRIGHTNESS_DELTA = 0.1
 	GAMMA_DELTA = [0,0.025,0.05]
-	MINI_FILE_NAME = 'xrandr_current_values_simple.json'
+	MINI_FILE_NAME = 'minixrandr_current_values.json'
 	ALLOWED_OPTIONS = {'redder':False,'bluer':False,'brighter':False,'dimmer':False, 'reset':False}
 	RESET_BRIGHTNESS_VALUE = 1
 	RESET_GAMMA_VALUE = [1,1,1]
