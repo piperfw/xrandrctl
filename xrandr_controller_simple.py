@@ -30,11 +30,17 @@ class XRandrController:
 	ALLOWED_OPTIONS : dictionary
 		Each key is an option which may be passed as a command line argument to this program when prefixed with two 
 		hyphens, and its value is the default value for that option (all False i.e. 'off').
+	RESET_BRIGHTNESS_VALUE : float
+		The value to which the brightness of all outputs is set to by the --reset option.
+	RESET_GAMMA_VALUE : list of floats
+		The values to which the gamma of all outputs is set to by the --reset option.
 	"""
 	BRIGHTNESS_DELTA = 0.1
 	GAMMA_DELTA = [0,0.025,0.05]
 	MINI_FILE_NAME = 'xrandr_current_values_simple.json'
-	ALLOWED_OPTIONS = {'redder':False,'bluer':False,'brighter':False,'dimmer':False}
+	ALLOWED_OPTIONS = {'redder':False,'bluer':False,'brighter':False,'dimmer':False, 'reset':False}
+	RESET_BRIGHTNESS_VALUE = 1
+	RESET_GAMMA_VALUE = [1,1,1]
 
 	def __init__(self, arguments):
 		# To store MINI_FILE_NAME elsewhere, edit this path construction.
@@ -61,7 +67,13 @@ class XRandrController:
 	def set_new_values(self):
 		"""Modify the brightness and gamma fields in self.current_values according to user input (self.arguments) 
 		and class variables BRIGHTNESS_DELTA and GAMMA_DELTA.
+
+		If --reset was passed as an argument, the brightness and gamma values are firstly reset to 1 and 1:1:1,
+		respectively (self.RESET_BRIGHTNESS_VALUE and self.RESET_GAMMA_VALUE).
 		"""
+		if self.arguments['reset']:
+			self.current_values['gamma'] = self.RESET_GAMMA_VALUE
+			self.current_values['brightness'] = self.RESET_BRIGHTNESS_VALUE
 		# If option 'bluer' is True, we add gamma_delta to current gamma values. If 'redder' is true we subtract
 		gamma_to_add = [x*(int(self.arguments['bluer'])-int(self.arguments['redder'])) for x in self.GAMMA_DELTA]
 		self.current_values['gamma'] = list(map(operator.add, self.current_values['gamma'], gamma_to_add))

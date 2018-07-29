@@ -3,6 +3,9 @@ Calls xrandr to change brightness and colour of chosen screens based on user inp
 bluer) and the current values of brightness and colour of those screens, which is recorded in VALUE_FILE_NAME.
 
 For usage please see Readme.md (TODO).
+
+Alias should contain printable non-whitespace characters and cannot be the name of any program on your system or
+any of the following keywords: 'reset', 'all',
 """
 
 import json, sys, operator, subprocess, logging, os, time
@@ -13,7 +16,7 @@ logger.setLevel(logging.DEBUG)
 file_handler = logging.FileHandler(os.path.splitext(__file__)[0] + '.log')
 # Edit level here is wish to filter messages to e.g. WARNING only.
 file_handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s: %(message)s', '%Y-%m-%d %H:%M:%S')
+formatter = logging.Formatter('%(asctime)s:%(levelname)s: %(message)s', '%Y-%m-%d %H:%M:%S')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
@@ -37,11 +40,17 @@ class XRandrController:
 	ALLOWED_OPTIONS : dictionary
 		Each key is an option which may be passed as a command line argument to this program when prefixed with two 
 		hyphens, and its value is the default value for that option (all False i.e. 'off').
+	RESET_BRIGHTNESS_VALUE : float
+		The value to which the brightness of an output is set to by the --reset option.
+	RESET_GAMMA_VALUE : list of floats
+		The values to which the gamma of an output is set to by the --reset option.
 	"""
 	DEFAULT_BRIGHTNESS_DELTA = 0.1
 	DEFAULT_GAMMA_DELTA = [0,0.025,0.05]
 	VALUE_FILE_NAME = 'xrandr_current_values.json'
-	ALLOWED_OPTIONS = {'redder':False,'bluer':False,'brighter':False,'dimmer':False}
+	ALLOWED_OPTIONS = {'redder':False,'bluer':False,'brighter':False,'dimmer':False, 'reset':False}
+	RESET_BRIGHTNESS_VALUE = 1
+	RESET_GAMMA_VALUE = [1,1,1]
 
 	def __init__(self, arguments):
 		# To store VALUE_FILE_NAME elsewhere, edit this path construction.
@@ -66,11 +75,14 @@ class XRandrController:
 		with open(self.value_file, 'r') as f:
 			self.current_values = json.load(f)
 
-	def set_new_values(self):
+	def set_new_values(self, reset=False):
 		"""Modify each dictionary in self.current_values according to user input (self.arguments) and deltas for
 		brightness/gamma stored in the dictionary (otherwise use default deltas). Note that, as mutable objects,
 		the dictionaries of self.current_values (as well as the list self.current_values itself), are changed in 
 		place.
+		
+		If --reset was passed as an argument, the brightness and gamma for an output is firstly reset to 1 and 1:1:1,
+		respectively (self.RESET_BRIGHTNESS_VALUE and self.RESET_GAMMA_VALUE).
 		"""
 		# Iterate through each known output in self.current_values
 		for known_output_dict in self.current_values:
@@ -79,6 +91,7 @@ class XRandrController:
 			output_name = known_output_dict['output']
 			# We need to modify the values for output_name if its alias or name was given as a command line argument,
 			# or 'all' was ('all' is set if NO particular output was specified, only options - see main()).
+			options = {}
 			if alias in self.arguments:
 				options = self.arguments[alias]
 			elif output_name in self.arguments:
@@ -87,11 +100,15 @@ class XRandrController:
 				options = self.arguments['all']
 			else:
 				continue
+			# Reset gamma and brightness values before applying other changes, if a reset was specified by the user.
+			if options['reset']:
+				known_output_dict['gamma'] = self.RESET_GAMMA_VALUE
+				known_output_dict['brightness'] = self.RESET_BRIGHTNESS_VALUE
 			# If a 'gamma_delta' property is specified in known_output_dict, use that. Otherwise use the default deltas.
 			gamma_delta = known_output_dict.get('gamma_delta', self.DEFAULT_GAMMA_DELTA)
 			# If option 'bluer' is True, we add gamma_delta to current gamma values. If 'redder' is true we subtract
 			gamma_to_add = [x*(int(options['bluer'])-int(options['redder'])) for x in gamma_delta]
-			# map() to add each value of gamma_to_add to the corresponding element in known_output_dict['gamma']
+			# Use map() to add each value of gamma_to_add to the corresponding element in known_output_dict['gamma']
 			# (both are lists of three floats) - another list comprehension could be used instead here.
 			known_output_dict['gamma'] =  list(map(operator.add, known_output_dict['gamma'], gamma_to_add))
 			# Similarly, use the 'brightness_delta' value, if the key exists.
