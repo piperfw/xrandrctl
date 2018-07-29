@@ -2,7 +2,6 @@
   {
     "alias": "primary",
     "output": "DVI-I-1",
-    "brightness_delta": 0.1,
     "brightness": 1.0,
     "gamma": [
       1.0,
@@ -18,11 +17,6 @@
       1.0,
       1.0,
       1.0
-    ],
-    "gamma_delta": [
-      0,
-      0.03,
-      0.06
     ]
   }
 ]
