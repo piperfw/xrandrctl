@@ -9,17 +9,17 @@ python xrandrctl.py HDMI-1 --brighter --bluer
 ```
 
 The available options are
-`--brighter`
-`--dimmer`
-`--redder`
+`--brighter`,
+`--dimmer`,
+`--redder`,
 `--bluer`, and 
 `--reset`,
 with obvious meanings.
 
 For those without multiple monitors or the need to control the brightness/gamma of multiple monitors individually, you may want to use the 'mini' version of this wrapper: [`minixrandrctl`.](#minixrandrctl)
 
-### Set up
-Copy `xrandr_current_values.json` into the directory containing `xrandrctl.py`. This JSON document contains an array of objects (comma separated), each describing one output connected recognised as 'connected' by `xrandr` (and supporting changes in gamma and brightness).
+### Setup
+Copy `xrandr_current_values.json` from `example_json` into the directory containing `xrandrctl.py`. This JSON document contains an array of objects (comma separated), each describing one output recognised as 'connected' by `xrandr`.
 The only fields absolutely required in each dictionary are the `output`, `brightness` and `gamma` fields. `output` is the name of the connected display as listed by running `xrandr`. For example, `"output": "DVI-I-1"`. `brightness` is the saved brightness of the display, which should be `1` before you first run the script. Similarly, `gamma` is the remembered value of the R:G:B gamma triplet for the display as an array of floats and has a starting value of `[1,1,1]`.
 
 Optional fields for an output:
@@ -70,6 +70,7 @@ A bash alias is handy here. For example,
 ---------
 alias xrandctl="python ./my_scripts/xrandrctl.py"
 ```
+You may also like to make key bindings for running `xrandctl` with various options (see 'example_i3_config_entry' for an exampple of a set of keybindings for the i3 window manager).
 
 To change the brightness or gamma of _all_ outputs added to `xrandr_current_values.json`, simply omit naming the output or its alias. For example,
 ```
@@ -84,4 +85,22 @@ restoring the brightness and gamma of every output.
 
 
 # minixrandrctl
-Todo
+`minixrandrctl.py` is a stripped down version of `xrandrctl.py` which doesn't allow for changing the brightness and gamma values different screens independtly, but is quicker to set up for someone without need of such control.
+
+## Setup
+Copy `minixrandr_current_values.json` from `example_json` into the directory containing `minixrandrctl.py`. This file contains a single JSON object. Simply add any connected `xrandr` outputs you wish to be controlled to the comma separated array `outputs` (run `xrandr` to determine the name of any output(s) you have). The `brightness` and `gamma` fields should not be edited.
+
+## Control
+The brightness and colour of all screens may be changed by passing the `--brighter`, `--dimmer`, `--redder`, `--bluer` or `--reset` options as arguemnts of `minixrandrctl.py`. For example,
+```
+python minixrandrctly.py --dimmer --redder
+```
+reduces the brightness and blue content across all outputs listed in `minixrandr_current_values.json`.
+
+## Notes
+The decision was made to store brightness and gamma values independtly of the `xrandr` program because of how long it takes to poll the latter (spot the `brightness` and `gamma` proprties in `xrandr --verbose`). The one downside is that a discrepancy may arise between the stored values and the actual values, if the user decides to set the values directly using `xrandr` or the values are reset due to a system reboot, for example (this disparity will only last until the next call to `xrandrctl.py`). A simple way to avoid the latter is to add a call to `xrandctl.py` (or `minixrandctl.py`) reset the values of all outputs in a start-up or login script such as `~/.bash_profile`:
+```
+python xrandctl.py --reset
+```
+
+By default, both `xrandrctly.py` and `minixrandrctly.py` log any output from `xrandr` (and other information) to files by the same name but with a `.log` extension. The logging level may be changed or logging stopped entirely by editing the relevant lines at the top of either script.
