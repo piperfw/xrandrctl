@@ -90,6 +90,7 @@ class XRandrController:
 			# Run the process and capture any output.
 			process = subprocess.run(xrandr_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
 				universal_newlines=True, timeout=1)
+			completed_message = 'Process completed in {} seconds'.format(time.time()-start)
 			if process.stdout:
 				completed_message += ' with the following output: {}.'.format((process.stdout))
 			else:
