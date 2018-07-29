@@ -9,6 +9,7 @@ import json, sys, operator, subprocess, logging, os, time
 # Logging set-up - single file handler to minixrandrctl.log
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+# Comment out the below lines if you want to disable logging to file.
 file_handler = logging.FileHandler(os.path.splitext(__file__)[0] + '.log')
 # Edit level here is wish to filter messages to e.g. WARNING only.
 file_handler.setLevel(logging.DEBUG)
