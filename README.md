@@ -68,9 +68,9 @@ A bash alias is handy here. For example,
 ```sh
 ~/.bashrc
 ---------
-alias xrandctl="python ./my_scripts/xrandrctl.py"
+alias xrandctl="python ~/my_scripts/xrandrctl.py"
 ```
-You may also like to make key bindings for running `xrandctl` with various options (see `i3_config_snippet` for an exampple of a set of keybindings for the i3 window manager).
+You may also like to make key bindings for running `xrandctl` with various options (see `i3_config_snippet` for an example of a set of keybindings for the i3 window manager).
 
 To change the brightness or gamma of _all_ outputs added to `xrandr_current_values.json`, simply omit naming the output or its alias. For example,
 ```
@@ -98,7 +98,7 @@ python minixrandrctly.py --dimmer --redder
 reduces the brightness and blue content across all outputs listed in `minixrandr_current_values.json`.
 
 ## Notes
-The decision was made to store brightness and gamma values independtly of the `xrandr` program because of how long it takes to poll the latter - spot the `brightness` and `gamma` proprties in `xrandr --verbose` (the gamma values do not appear to be correct on my system). The one downside is that a discrepancy may arise between the stored values and the actual values, if the user decides to set the values directly using `xrandr` or the values are reset due to a system reboot, for example (this disparity will only last until the next call to `xrandrctl.py`). A simple way to avoid the latter is to add a call to `xrandctl.py` (or `minixrandctl.py`) reset the values of all outputs in a start-up or login script such as `~/.bash_profile`:
+The decision was made to store brightness and gamma values independtely of the `xrandr` program because of how long it takes to poll the latter - spot the `brightness` and `gamma` proprties in `xrandr --verbose` (the gamma values do not appear to be correct on my system). The one downside is that a discrepancy may arise between the stored values and the actual values, if the user decides to set the values directly using `xrandr` or the values are reset due to a system reboot, for example (this disparity will only last until the next call to `xrandrctl.py`). A simple workaround is to add a call to `xrandctl.py` (or `minixrandctl.py`) to reset the values of all outputs in a start-up or login script such as `~/.bash_profile`:
 ```
 python xrandctl.py --reset
 ```
