@@ -2,3 +2,4 @@ scrapbook*
 *.log
 minixrandr_current_values.json
 xrandr_current_values.json
+*.zip
